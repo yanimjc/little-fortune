@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7efe3">
+  <meta name="description" content="A little fortune, just for you. Tap, pause, and discover a message.">
+  <title>A Little Fortune</title>
+  <style>
+    :root {
+      --mark: #bd7057;
+      --spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M50 50Q72 54 90 50M50 50Q62.8 68.4 78.3 78.3M50 50Q46 72 50 90M50 50Q31.6 62.8 21.7 78.3M50 50Q28 46 10 50M50 50Q37.2 31.6 21.7 21.7M50 50Q54 28 50 10M50 50Q68.4 37.2 78.3 21.7'/%3E%3Ccircle cx='50' cy='50' r='4.5'/%3E%3C/g%3E%3Cg fill='black'%3E%3Ccircle cx='90' cy='50' r='3.6'/%3E%3Ccircle cx='78.3' cy='78.3' r='3.6'/%3E%3Ccircle cx='50' cy='90' r='3.6'/%3E%3Ccircle cx='21.7' cy='78.3' r='3.6'/%3E%3Ccircle cx='10' cy='50' r='3.6'/%3E%3Ccircle cx='21.7' cy='21.7' r='3.6'/%3E%3Ccircle cx='50' cy='10' r='3.6'/%3E%3Ccircle cx='78.3' cy='21.7' r='3.6'/%3E%3C/g%3E%3C/svg%3E");
+      --cream: #f7efe3;
+      --paper: #fffaf2;
+      --ink: #3e352f;
+      --muted: #83766b;
+      --terracotta: #bd7057;
+      --peach: #f0c5ad;
+      --sage: #a9b49a;
+      --yellow: #e8c979;
+      --line: #e7d9c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(240,197,173,.45), transparent 23%),
+        radial-gradient(circle at 88% 82%, rgba(169,180,154,.35), transparent 25%),
+        var(--cream);
+      font-family: "Avenir Next", Avenir, "Trebuchet MS", sans-serif;
+      display: grid; place-items: center; padding: 24px 20px;
+    }
+    .page { width: min(100%, 460px); min-height: calc(100vh - 48px); display: flex; flex-direction: column; position: relative; }
+    .topline {
+      display: flex; align-items: center; justify-content: flex-start;
+      gap: 12px; margin-bottom: auto; padding-bottom: 28px;
+    }
+    .brand {
+      font-family: Georgia, serif; font-size: 17px; letter-spacing: .02em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .spark {
+      display: inline-block; flex: none; background-color: currentColor;
+      -webkit-mask: var(--spark) center / contain no-repeat;
+      mask: var(--spark) center / contain no-repeat;
+    }
+    .brand-mark { width: 24px; height: 24px; color: var(--mark); transition: color .35s ease; }
+    .lang {
+      border: 1px solid var(--line); border-radius: 999px; background: rgba(255,250,242,.75);
+      color: var(--ink); padding: 8px 12px; font: inherit; font-size: 12px;
+      cursor: pointer;
+    }
+    .eyebrow {
+      color: var(--terracotta); text-transform: uppercase; letter-spacing: .19em;
+      font-size: 10px; font-weight: 700; margin: 0 0 10px;
+    }
+    h1 {
+      font-family: Georgia, "Times New Roman", serif; font-weight: 400;
+      font-size: clamp(38px, 10vw, 57px); line-height: 1.02;
+      letter-spacing: -.045em; margin: 0;
+    }
+    .intro { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 14px auto 24px; max-width: 330px; }
+    .fortune-card {
+      --card-bg: #f5eae1;
+      --card-ink: #493d2d;
+      --card-accent: #81733a;
+      position: relative; background: var(--card-bg); color: var(--card-ink);
+      border: 1px solid rgba(62,53,47,.12);
+      border-radius: 22px; padding: 38px 25px 32px; min-height: 340px;
+      box-shadow: 0 18px 50px rgba(91,67,48,.13);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden; transition: background-color .35s ease, color .35s ease;
+    }
+    .fortune-card::before, .fortune-card::after {
+      content: ""; position: absolute; width: 34px; height: 34px;
+      background-color: var(--card-accent); opacity: .9;
+      -webkit-mask: var(--spark) center / contain no-repeat;
+      mask: var(--spark) center / contain no-repeat;
+      transition: background-color .35s ease;
+    }
+    .fortune-card::before { top: 16px; left: 18px; transform: rotate(-12deg); }
+    .fortune-card::after { bottom: 14px; right: 18px; transform: rotate(15deg); }
+    .primary .spark { width: 15px; height: 15px; margin-left: 6px; vertical-align: -2px; }
+    .cookie { font-size: 36px; margin-bottom: 13px; filter: saturate(.8); }
+    .category {
+      font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--card-accent); font-weight: 700; margin-bottom: 17px;
+    }
+    blockquote {
+      font-family: Georgia, "Times New Roman", serif; font-size: clamp(25px, 6vw, 33px);
+      line-height: 1.25; letter-spacing: -.025em; margin: 0; max-width: 390px;
+    }
+    .little-note { color: var(--card-ink); opacity: .72; font-size: 11px; margin-top: 18px; }
+    .actions { display: grid; gap: 11px; margin: 20px 0 auto; }
+    .primary {
+      border: 0; border-radius: 999px; padding: 16px 22px; background: var(--terracotta);
+      color: white; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 7px 16px rgba(189,112,87,.2); transition: transform .15s, filter .15s;
+    }
+    .primary:hover { filter: brightness(.97); transform: translateY(-1px); }
+    .secondary-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .secondary {
+      border: 1px solid var(--line); background: rgba(255,250,242,.72); color: var(--ink);
+      border-radius: 999px; padding: 10px 15px; font: inherit; font-size: 12px; cursor: pointer;
+    }
+    .category-wrap { margin: 25px 0 0; }
+    .category-label { font-size: 11px; color: var(--muted); margin-bottom: 11px; }
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .chip {
+      border: 1px solid var(--line); background: rgba(255,250,242,.55); color: var(--muted);
+      border-radius: 999px; padding: 8px 11px; font: inherit; font-size: 11px; cursor: pointer;
+    }
+    .chip[aria-pressed="true"] { background: #ead6c7; border-color: #d5ad96; color: #65483b; }
+    footer { color: #96887b; font-size: 10px; margin-top: 27px; letter-spacing: .04em; }
+    button:focus-visible { outline: 3px solid var(--sage); outline-offset: 3px; }
+    @media (prefers-reduced-motion: no-preference) {
+      .fortune-card { animation: arrive .45s ease both; }
+      @keyframes arrive { from { opacity: .55; transform: translateY(7px) scale(.99); } to { opacity: 1; transform: none; } }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topline">
+      <div class="brand"><span class="spark brand-mark" aria-hidden="true"></span> a little fortune</div>
+    </header>
+
+    <section class="fortune-card" aria-live="polite" aria-atomic="true">
+      <div class="cookie" aria-hidden="true">🥠</div>
+      <blockquote id="fortuneText">Tu potencial es infinito</blockquote>
+    </section>
+
+    <div class="actions">
+      <button class="primary" id="anotherButton" type="button">Encuentra otra fortuna<span class="spark" aria-hidden="true"></span></button>
+    </div>
+  </main>
+
+  <script>
+    const fortunes = [
+      { text: "Métele ganas que lo consigues" },
+      { text: "Tu potencial es infinito" },
+      { text: "Veo un vinito en tu futuro" },
+      { text: "Ponte las pilas" },
+      { text: "El corazón es la brújula" },
+      { text: "Vas mejor de lo que piensas" },
+      { text: "El camino aparecerá cuando empieces a caminar" },
+      { text: "Hay que atreverse a soñar" },
+      { text: "Tu mejor amuleto es tu energía" },
+      { text: "Veo una cervecita en tu futuro" },
+      { text: "El amor que das, regresa" },
+      { text: "Esta es la señal que esperabas" },
+      { text: "Gracias por estar" },
+      { text: "Se te van a abrir muchas puertas" },
+      { text: "Todo tu esfuerzo va a valer la pena" },
+      { text: "Se vienen cositas" },
+      { text: "La fortuna favorece a los valientes" },
+      { text: "Cada segundo cuenta" },
+      { text: "Comienza donde estás" },
+      { text: "Te mereces un día de playita" },
+      { text: "Eres muy especial" },
+      { text: "El mundo es un mejor lugar contigo en él" },
+      { text: "Eres un imán de cosas buenas" },
+      { text: "Eres un museo de todo lo que amas" },
+      { text: "La vida da muchas vueltas y las vueltas dan mucha vida" },
+      { text: "Agradece dónde estás" },
+      { text: "Nunca es muy tarde" },
+      { text: "Encuentra tiempo para lo que te alegra el alma" },
+      { text: "Una cabeza llena de miedos no tiene espacio para sueños" },
+      { text: "Hazlo aunque no salga perfecto" },
+      { text: "Haz más locuras" },
+      { text: "La cantidad de cosas buenas en tu vida depende de tu habilidad de notarlas" },
+      { text: "Ama sin miedo" },
+      { text: "Siempre vale la pena volver a empezar" },
+      { text: "Hasta lo que sale mal nos lleva a algo mejor" },
+      { text: "Toma el riesgo" },
+      { text: "Eres más valiente de lo que piensas" },
+      { text: "Todo es temporal. Abraza los momentos buenos y recuerda que los malos pasarán." },
+      { text: "Vive con intención" },
+      { text: "Lo estás haciendo increíble" },
+      { text: "No dejes de luchar por tus sueños" },
+      { text: "Hay mucha gente que te ama y cree en ti" },
+      { text: "Sal a bailar" },
+      { text: "Trátalo otra vez" },
+      { text: "Eres más que suficiente" },
+      { text: "No tienes que ser fuerte todo el tiempo" },
+      { text: "La vida sería muy aburrida si todo te saliera bien del primer intento. Vuelve a tratar." },
+      { text: "Intenta nuevos sueños" },
+      { text: "¿Y si todo sale bien?" },
+      { text: "Lo que se cuida, perdura" },
+      { text: "Lo esencial es invisible a los ojos" },
+      { text: "No lo pienses tanto" },
+      { text: "Alza vuelo" }
+    ];
+
+    let previousFortune = -1;
+    let previousPalette = -1;
+
+    // Earthy palette sampled from the reference swatches.
+    const cardPalettes = [
+      // `mark` colors the header icon (on the cream page), so it's picked for contrast there.
+      { name: "Leather", bg: "#68402b", ink: "#f5eae1", accent: "#c5c49a", mark: "#68402b" },
+      { name: "Fall Leaves", bg: "#9b5b2d", ink: "#fff0dc", accent: "#e2a52e", mark: "#9b5b2d" },
+      { name: "Mustard", bg: "#d69a2d", ink: "#493526", accent: "#654027", mark: "#d69a2d" },
+      { name: "Trail Dust", bg: "#cbb38d", ink: "#493d2d", accent: "#fff8ed", mark: "#a88f65" },
+      { name: "Field Notes", bg: "#f5eae1", ink: "#493d2d", accent: "#6c5b2b", mark: "#6c5b2b" },
+      { name: "Pine Dew", bg: "#b8b99b", ink: "#3f402c", accent: "#85813b", mark: "#85813b" },
+      { name: "Moss Pillow", bg: "#777535", ink: "#f8eedc", accent: "#d6c99b", mark: "#777535" },
+      { name: "PNW Breeze", bg: "#a65e32", ink: "#fff0dc", accent: "#6e4529", mark: "#a65e32" }
+    ];
+
+    const $ = id => document.getElementById(id);
+    function changeCardPalette() {
+      let choices = cardPalettes.map((palette, index) => index)
+        .filter(index => index !== previousPalette);
+      if (!choices.length) choices = cardPalettes.map((palette, index) => index);
+      const pickedIndex = choices[Math.floor(Math.random() * choices.length)];
+      previousPalette = pickedIndex;
+      const palette = cardPalettes[pickedIndex];
+      const card = document.querySelector(".fortune-card");
+      card.style.setProperty("--card-bg", palette.bg);
+      card.style.setProperty("--card-ink", palette.ink);
+      card.style.setProperty("--card-accent", palette.accent);
+      document.documentElement.style.setProperty("--mark", palette.mark);
+    }
+
+    function chooseFortune() {
+      let choices = fortunes.map((fortune, index) => ({ fortune, index }))
+        .filter(item => item.index !== previousFortune);
+      if (!choices.length) choices = fortunes.map((fortune, index) => ({ fortune, index }));
+      const picked = choices[Math.floor(Math.random() * choices.length)];
+      previousFortune = picked.index;
+      changeCardPalette();
+      $("fortuneText").textContent = picked.fortune.text;
+    }
+
+    $("anotherButton").addEventListener("click", chooseFortune);
+    chooseFortune();
+  </script>
+</body>
+</html>
